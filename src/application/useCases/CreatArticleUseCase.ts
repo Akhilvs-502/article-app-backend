@@ -13,7 +13,6 @@ export class CreateArticleUseCase implements ICreateArticleUseCase {
     }
 
     async execute(userId:string,title: string, description: string, content: string, category: string, tags: string[], image: string): Promise<Article> {
-        console.log("Creating article:", title);
         const article = await this.articleRepository.create({
             userId,
             title,

@@ -14,11 +14,7 @@ export class CreateUserUseCase implements ICreateUserUseCase {
 
   async execute(firstName: string,lastName:string, email: string, password: string): Promise<string| null > {
     const existingEmail = await this.userRepository.findByEmail(email);
-    // const existingUsername = await this.userRepository.findByUserName(firname);
-
-    // if (existingUsername) {
-    //   throw new Error('Username already exists');
-    // }
+ 
     if (existingEmail) {
       throw new Error('User with this email already exists');
     }

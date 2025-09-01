@@ -9,7 +9,7 @@ export class ArticleController {
     getFeeds = async (req: Request, res: Response, next: NextFunction) => {
         try {
 
-            console.log("fetchingggg.........data");
+            console.log("fetching.........data");
             
             const feeds = await this.articleRepository.getUserFeeds(req.user.id);
 
