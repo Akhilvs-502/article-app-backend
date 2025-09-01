@@ -22,6 +22,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     } else {
       foundUser = await this.userRepository.findByUserName(identifier);
     }
+console.log(foundUser,"foundUser");
 
 
     if (!foundUser?.password) {

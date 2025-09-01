@@ -1,0 +1,126 @@
+import { NextFunction, Request, Response } from 'express';
+import { IJwtService } from '../domain/services/IJwtService';
+import { env } from '@/config/env';
+import { IGetRepositoryDataUseCase } from '@/application/interfaces/IGetRepositoryDataUseCase';
+import { AppError } from '@/domain/error/AppError';
+
+interface IRepoData {
+  status: string, email: string, name: string, _id: string
+}
+
+// ADMIN AND USER HAVE SAME Authenticate CONTROLLER (
+
+export class Authenticate<Entity> {
+  constructor(
+    private jwtService: IJwtService,
+    private getRepositoryDataUseCase: IGetRepositoryDataUseCase<Entity>,
+  ) { }
+
+  verify = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log('validating user');
+
+      const { accessToken } = req.cookies;
+      const { refreshToken } = req.cookies;
+
+      if (!accessToken && !refreshToken) {
+   
+
+        return res.status(401).json({ status: false, message: 'login  expired' });
+      }
+
+      if (accessToken) {
+   
+        const tokenData = await this.jwtService.varifyAccessToken(accessToken);
+    
+        // const userPayload=this.jwtService.varifyAccessToken(accessToken)
+        if (tokenData) {
+          const foundUser = await this.getRepositoryDataUseCase.OneDocumentById(tokenData.userId) as IRepoData;
+
+      
+          const isProduction = env.NODE_ENV === "production"
+
+          if (foundUser?.status && foundUser?.status === 'banned') {
+      
+
+            res.clearCookie('accessToken', {
+              httpOnly: true,
+              sameSite: isProduction ? "none" : "strict",
+              secure: isProduction,
+              domain: isProduction ? env.COOKIE_DOMAIN : undefined,
+
+            });
+
+            res.clearCookie('refreshToken', {
+              httpOnly: true,
+              sameSite: isProduction ? "none" : "strict",
+              secure: isProduction,
+              domain: isProduction ? env.COOKIE_DOMAIN : undefined,
+            });
+
+            return res.status(401).json({ status: false, message: 'This Account is banned' });
+          }
+          if (foundUser) {
+            req.user = {
+              role: tokenData.role, email: foundUser.email, name: foundUser.name, id: foundUser._id,
+            }; // i can use other routesn
+
+            return next();
+          }
+
+
+          res.clearCookie('accessToken', {
+            httpOnly: true,
+            sameSite: isProduction ? "none" : "strict",
+            secure: isProduction,
+            domain: isProduction ? env.COOKIE_DOMAIN : undefined,
+
+          });
+
+          res.clearCookie('refreshToken', {
+            httpOnly: true,
+            sameSite: isProduction ? "none" : "strict",
+            secure: isProduction,
+            domain: isProduction ? env.COOKIE_DOMAIN : undefined,
+
+          });
+          return next(new AppError('user not found: Unauthorized ', 401));
+        }
+      }
+      if (refreshToken) {
+        console.log('refreshToken found');
+        const userPayload = this.jwtService.varifyRefreshToken(refreshToken);
+        const { exp, iat, ...payload } = userPayload;
+        if (userPayload) {
+          const createAccesstoken = this.jwtService.signAccessToken(payload);
+
+          const isProduction = env.NODE_ENV === "production"
+
+          res.cookie('accessToken', createAccesstoken, {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "strict",
+            maxAge: 1000 * 60 * 15,
+            domain: isProduction ? env.COOKIE_DOMAIN : undefined,
+          });
+          const foundUser = await this.getRepositoryDataUseCase.OneDocumentById(userPayload.userId) as IRepoData;
+
+          if (foundUser) {
+            req.user = {
+              role: payload.role, email: foundUser.email, name: foundUser.name, id: foundUser._id,
+            }; // i can use other routesn
+
+            return next();
+          }
+
+          return next(new AppError('user not found', 404));
+        }
+      }
+    } catch (error) {
+  
+console.log(error);
+
+      return res.status(401).json({ status: false, message: 'No token' });
+    }
+  };
+}

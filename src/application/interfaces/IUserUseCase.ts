@@ -11,7 +11,7 @@ export interface ICreateUserUseCase {
 export interface ILoginUserUseCase {
     execute(identifier: string, password: string): Promise<{
         user:
-        { name: string, email: string, image?: string },
+        { firstName: string, email: string, image?: string },
         refreshToken: string, accessToken: string
     }>
 }
@@ -34,6 +34,8 @@ export interface IUpdateUserUseCase {
 export interface IUploadImageUseCase {
     execute(fileBuffer: Buffer, originalName: string, mimeType: string): Promise<string>
 }
+
+
 
 
 
