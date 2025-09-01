@@ -29,7 +29,7 @@ export class ProfileController {
 
 
       const data = await this.updateUseCase.execute(user.email, profileData);
-      if (data) { res.status(HttpStatusCode.OK).json({ status: true, message: 'problems fetched success', user: { name: data.name, email: data.email, image: data.image } }); }
+      if (data) { res.status(HttpStatusCode.OK).json({ status: true, message: 'problems fetched success', user: { firstName: data.firstName, email: data.email, image: data.image } }); }
     } catch (error: any) {
       res.status(400).json({ status: false, message: error.message });
     }
@@ -61,7 +61,9 @@ export class ProfileController {
 
   resetPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data = new ResetPasswordDTO(req.body, req.user.email);
+
+      const user = req.user as { email: string };
+      const data = new ResetPasswordDTO(req.body, user.email);
 
     
 

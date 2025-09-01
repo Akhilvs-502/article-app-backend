@@ -22,9 +22,9 @@ export class DashboardController {
       console.log('create article');
 
       const article = new CreateArticleDTO(req.body)
-      const userId = req.user.id
+      const user = req.user
 
-      const result = await this.createArticleUseCase.execute(userId, article.title, article.description, article.content, article.category, article.tags, article.image)
+      const result = await this.createArticleUseCase.execute(user?.id!, article.title, article.description, article.content, article.category, article.tags, article.image)
 
       res.json({ status: true, message: 'Article created Successfully' });
     } catch (error: any) {
@@ -65,10 +65,10 @@ export class DashboardController {
 
       console.log("userArtile enter");
 
-      const userId = req.user.id
-      console.log("userId", userId.toString());
+      const user = req.user
+      console.log("userId", user?.id!.toString());
 
-      const articles = await this.getAllArticleDataUsingFieldUseCase.execute({ userId: userId.toString() });
+      const articles = await this.getAllArticleDataUsingFieldUseCase.execute({ userId: user?.id!.toString() });
 
       console.log("articles", articles);
 
@@ -85,10 +85,10 @@ export class DashboardController {
   updateArticle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const articleId = req.params.id;
-      const userId = req.user.id;
+      const user = req.user;
       const data = req.body;
 
-      console.log("updating articles", articleId, userId, data);
+      console.log("updating articles", articleId, user?.id, data);
 
 
       const updatedArticle = await this.updateArticleUseCase.execute(articleId, data);
@@ -108,12 +108,12 @@ export class DashboardController {
     try {
       const { action } = req.body;
       const articleId = req.params.id;
-      const userId = req.user.id;
+      const user = req.user;
       console.log("article Id",articleId);
-      console.log("updating articles", articleId, userId);
+      console.log("updating articles", articleId, user?.id);
       console.log("data action",action);
 
-      const result = await this.updateArticleActionUseCase.execute(userId, articleId, action);
+      const result = await this.updateArticleActionUseCase.execute(user?.id!, articleId, action);
 
 
       // if (!result) {

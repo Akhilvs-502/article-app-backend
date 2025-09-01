@@ -1,5 +1,5 @@
 import { IPendingUserRepository } from '@/domain/repositories/IPendingUserRepository';
-import { IResetPassverifyOtpUseCase } from '@/application/interfaces/use-cases/IUserPasswordUseCases';
+import { IResetPassverifyOtpUseCase } from '@/application/interfaces/IUserPasswordUseCases';
 
 export class ResetPassverifyOtpUseCase implements IResetPassverifyOtpUseCase {
   constructor(

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ISendOtpUseCase } from '@/application/interfaces/use-cases/IOtpUseCases';
+import { ISendOtpUseCase } from '@/application/interfaces/IOtpUseCases';
 import { AppError } from '@/domain/error/AppError';
 import { HttpStatusCode } from '@/shared/constants/HttpStatusCode';
 

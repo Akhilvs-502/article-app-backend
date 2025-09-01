@@ -10,7 +10,7 @@ export class ShowUserArticleUseCase  implements IShowUserArticleUseCase{
   constructor(private articleRepository: IArticleRepository) {}
 
   async execute(userId: string): Promise<Article[] > {
-    const articles = await this.articleRepository.findAllwithField(userId);
+    const articles = await this.articleRepository.findAllwithField({userId});
     if(!articles) return []
     return articles
 

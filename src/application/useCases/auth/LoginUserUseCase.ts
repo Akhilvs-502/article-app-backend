@@ -37,8 +37,8 @@ console.log(foundUser,"foundUser");
       throw new Error('Incorrect password. Please try again.');
     }
 
-    const accessToken = this.JwtService.signAccessToken({ userId: foundUser._id, name: foundUser.name, role: 'user' });
-    const refreshToken = this.JwtService.signRefereshToken({ userId: foundUser._id, name: foundUser.name, role: 'user' });
+    const accessToken = this.JwtService.signAccessToken({ userId: foundUser._id, name: foundUser.firstName, role: 'user' });
+    const refreshToken = this.JwtService.signRefereshToken({ userId: foundUser._id, name: foundUser.firstName, role: 'user' });
    
     //
 

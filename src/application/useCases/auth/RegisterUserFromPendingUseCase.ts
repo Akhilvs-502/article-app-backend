@@ -1,7 +1,7 @@
 import { User } from '@/domain/entities/User';
 import { IPendingUserRepository } from '@/domain/repositories/IPendingUserRepository';
 import { IUserRepository } from '@/domain/repositories/IUserRepository';
-import { IRegisterUserFromPendingUseCase } from '@/application/interfaces/use-cases/IUserUseCase';
+import { IRegisterUserFromPendingUseCase } from '@/application/interfaces/IUserUseCase';
 import { UserMapper } from '@/application/mapper/UserMapper';
 
 export interface CreateUserInput {

@@ -12,8 +12,8 @@ constructor(
 ){}
 
 
-    async execute(email:string,preferences:string):Promise<void>{
-        this.userRepository.updateFieldsByEmail(email,preferences)
+    async execute(email:string,preferences:string[]):Promise<void>{
+        this.userRepository.updateFieldsByEmail(email,{preferences})
     }
 
 }

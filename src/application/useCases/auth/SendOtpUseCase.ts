@@ -1,6 +1,6 @@
 import { IPendingUserRepository } from '@/domain/repositories/IPendingUserRepository';
 import { IOtpService } from '@/domain/services/IOtpService';
-import { ISendOtpUseCase } from '@/application/interfaces/use-cases/IOtpUseCases';
+import { ISendOtpUseCase } from '@/application/interfaces/IOtpUseCases';
 
 export class SendOtpUseCase implements ISendOtpUseCase {
   constructor(

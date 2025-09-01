@@ -1,6 +1,6 @@
 import { IUserRepository } from '@/domain/repositories/IUserRepository';
 import { IHashAlgorithm } from '@/domain/services/IHashAlgorithm';
-import { IVerifyUserPasswordUseCase } from '@/application/interfaces/use-cases/IUserPasswordUseCases';
+import { IVerifyUserPasswordUseCase } from '@/application/interfaces/IUserPasswordUseCases';
 
 export class VerifyUserPasswordUseCase implements IVerifyUserPasswordUseCase {
   constructor(

@@ -10,8 +10,10 @@ export class ArticleController {
         try {
 
             console.log("fetching.........data");
-            
-            const feeds = await this.articleRepository.getUserFeeds(req.user.id);
+
+            // const userId=req.user as 
+            const user=req.user as { id: string };
+            const feeds = await this.articleRepository.getUserFeeds(user.id);
 
             // console.log(feeds);
 

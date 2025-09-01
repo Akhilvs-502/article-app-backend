@@ -1,6 +1,6 @@
 import { IUserRepository } from '@/domain/repositories/IUserRepository';
 import { IHashAlgorithm } from '@/domain/services/IHashAlgorithm';
-import { IResetPasswordUseCase } from '@/application/interfaces/use-cases/IResetPasswordUseCase';
+import { IResetPasswordUseCase } from '@/application/interfaces/IUserPasswordUseCases';
 
 export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
