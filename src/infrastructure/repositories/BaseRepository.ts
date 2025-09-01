@@ -25,13 +25,7 @@ export abstract class BaseRepository<Entity, ModelSchema> implements IBaseReposi
     return allDocuments.map((data) => this.toEntity(data)).filter((data) => data != null);
   }
 
-  async findAllwithField(field: FilterQuery<Entity>): Promise<Entity[] | null> {
-    const findedDatas = await this.model.find(field);
-
-    // logger.info("find all with feild", findedDatas)
-
-    return findedDatas.map((data) => this.toEntity(data)).filter((data) => data != null);
-  }
-
+ 
+ 
     protected abstract toEntity(data: ModelSchema & Document | null): Entity | null;
 }
