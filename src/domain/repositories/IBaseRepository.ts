@@ -8,6 +8,5 @@ export interface IBaseRepository<Entity>{
 
     findAll():Promise<Entity[] | null>
 
-    findAllwithField(field:Partial<Entity>):Promise<Entity[] | null>
 
 }
