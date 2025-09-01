@@ -11,3 +11,8 @@ export interface IResetPasswordOtpUseCase {
 export interface IResetPassverifyOtpUseCase {
     execute(data: { email: string, otp: string }): Promise<boolean | { email: string, verified: boolean }>
 }
+
+
+export interface IResetPasswordUseCase{
+    execute(email:string, password:string):Promise<void>
+}

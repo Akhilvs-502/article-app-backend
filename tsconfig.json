@@ -18,7 +18,7 @@
     "sourceMap": false,
     "declaration": false
   },
-  "include": ["src/**/*", "src/infrastructure/database/.ts","types", "src/application/use-cases/user/arena/.ts", "src/application/mapper/.ts"],
+  "include": ["src/**/*", "src/infrastructure/database/.ts","types", "src/application/use-cases/user/arena/.ts", "src/application/mapper/.ts", "src/application/useCases/ShowUserArticleUseCase.ts", "src/application/useCases/.ts"],
 
   "exclude": ["node_modules", "dist",]
 }

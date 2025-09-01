@@ -23,7 +23,7 @@ export class CreateUserUseCase implements ICreateUserUseCase {
       throw new Error('User with this email already exists');
     }
     const hashedPassword = await this.hashService.hash(password); // IS HERE WANTED TRY CATCH
-    const user = new User(firstName,lastName, email);
+    const user = new User(firstName,lastName, email,[],hashedPassword);
 
     console.log("user",user );
     

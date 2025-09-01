@@ -7,14 +7,17 @@ export class UserMapper {
 
     static toResponseDTO(user: User) {
         return {
-            name: user.firstName,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             image: user.image,
             id: user._id,
+            preferences: user.preferences,
             createdAt: user.createdAt,
             status: user.status,
             googleId: user.googleId,
             updatedAt: user.updatedAt,
+            bio: user.bio
 
         }
     }
