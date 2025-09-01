@@ -27,8 +27,10 @@ export class ArticleRepository extends BaseRepository<Article, IArticle> impleme
         return new Article(data.userId, data.title, data.description, data.content, data.category, data.tags, data.image, data._id, data.likes, data.dislikes, data.createdAt, data.updatedAt, data.isBlocked);
     }
 
-    async getUserFeeds(userId: string): Promise<Array<{ article: Article, action: 'like' | 'dislike' | null }>> {
+    async getUserFeeds(userId: string,preferences:string[]): Promise<Array<{ article: Article, action: 'like' | 'dislike' | null }>> {
         userId = userId.toString()
+
+        // const preferences = ["tech", "science"];
 
         const feeds = await ArticleModel.aggregate([
             {
@@ -63,7 +65,8 @@ export class ArticleRepository extends BaseRepository<Article, IArticle> impleme
                     isBlockedUser: { $eq: ["$userAction.action", "block"] }
                 }
             },
-            // {$match: { isBlocked: false }}
+            {$match: { isBlocked: false,category:{$in:preferences} }}
+
         ]);
         return feeds
     }

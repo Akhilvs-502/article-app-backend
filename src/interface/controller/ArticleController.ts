@@ -2,9 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import { UpdateArticleActionUseCase } from '@/application/useCases/UpdateArticleActionUseCase';
 import { ArticleRepository } from '@/infrastructure/repositories/ArticleRepository';
 import { HttpStatusCode } from '@/shared/constants/HttpStatusCode';
+import { IUserRepository } from '@/domain/repositories/IUserRepository';
 
 export class ArticleController {
-    constructor(private articleRepository: ArticleRepository) { }
+    constructor(private articleRepository: ArticleRepository,
+        private userRepository: IUserRepository
+    ) { }
 
     getFeeds = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -13,7 +16,8 @@ export class ArticleController {
 
             // const userId=req.user as 
             const user=req.user as { id: string };
-            const feeds = await this.articleRepository.getUserFeeds(user.id);
+            const userData=await this.userRepository.findById(user.id);
+            const feeds = await this.articleRepository.getUserFeeds(user.id,userData?.preferences || [] );
 
             // console.log(feeds);
 

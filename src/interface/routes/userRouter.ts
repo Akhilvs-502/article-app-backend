@@ -83,7 +83,7 @@ const verifyOtpController = new VerifyOtpController(verifyOtpUseCase, registerUs
 const profileController = new ProfileController(updateUserUseCase,getRepositoryDataUseCase,verifyUserPasswordUseCase,resetPasswordUseCase,uploadImageUseCase);
 const dashboardController = new DashboardController(createArticleUseCase, uploadImageUseCase, getAllArticleDataUsingFieldUseCase, updateArticleActionUseCase, updateArticleUseCase);
 const authenticate = new Authenticate(jwtService, getRepositoryDataUseCase);
-const articleController=new ArticleController(articleRepository)
+const articleController=new ArticleController(articleRepository,userRepository)
 
 router.post("/register", authController.register)
 router.post('/verifyOtp', verifyOtpController.verify);
