@@ -1,0 +1,7 @@
+{
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["dist"],
+    "exec": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/app.ts"
+
+}

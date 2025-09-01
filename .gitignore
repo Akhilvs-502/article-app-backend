@@ -1,0 +1,14 @@
+.env.development
+.env.production
+node_modules
+
+
+
+
+# echo "# article-app-frontend" >> README.md
+# git init
+# git add README.md
+# git commit -m "first commit"
+# git branch -M main
+# git remote add origin https://github.com/Akhilvs-502/article-app-frontend.git
+# git push -u origin main
