@@ -3,12 +3,14 @@ import { IJwtService } from '../domain/services/IJwtService';
 import { env } from '@/config/env';
 import { IGetRepositoryDataUseCase } from '@/application/interfaces/IGetRepositoryDataUseCase';
 import { AppError } from '@/domain/error/AppError';
+import { cookieData } from '@/shared/constants/cookieData';
+import { HttpStatusCode } from '@/shared/constants/HttpStatusCode';
+import { ControllerMessages } from '@/shared/constants/ControllerMessages';
 
 interface IRepoData {
   status: string, email: string, name: string, _id: string
 }
 
-// ADMIN AND USER HAVE SAME Authenticate CONTROLLER (
 
 export class Authenticate<Entity> {
   constructor(
@@ -18,30 +20,29 @@ export class Authenticate<Entity> {
 
   verify = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log('validating user');
+  
 
       const { accessToken } = req.cookies;
       const { refreshToken } = req.cookies;
 
       if (!accessToken && !refreshToken) {
-   
 
-        return res.status(401).json({ status: false, message: 'login  expired' });
+
+  return next(new AppError(ControllerMessages.LOGIN_EXPIRED, HttpStatusCode.UNAUTHORIZED));
       }
 
       if (accessToken) {
-   
-        const tokenData = await this.jwtService.varifyAccessToken(accessToken);
-    
-        // const userPayload=this.jwtService.varifyAccessToken(accessToken)
+
+        const tokenData = await this.jwtService.verifyAccessToken(accessToken);
+
         if (tokenData) {
           const foundUser = await this.getRepositoryDataUseCase.OneDocumentById(tokenData.userId) as IRepoData;
 
-      
+
           const isProduction = env.NODE_ENV === "production"
 
           if (foundUser?.status && foundUser?.status === 'banned') {
-      
+
 
             res.clearCookie('accessToken', {
               httpOnly: true,
@@ -58,12 +59,12 @@ export class Authenticate<Entity> {
               domain: isProduction ? env.COOKIE_DOMAIN : undefined,
             });
 
-            return res.status(401).json({ status: false, message: 'This Account is banned' });
+            return next(new AppError(ControllerMessages.ACCOUNT_BANNED, HttpStatusCode.UNAUTHORIZED));
           }
           if (foundUser) {
             req.user = {
               role: tokenData.role, email: foundUser.email, name: foundUser.name, id: foundUser._id,
-            }; // i can use other routesn
+            };
 
             return next();
           }
@@ -84,12 +85,12 @@ export class Authenticate<Entity> {
             domain: isProduction ? env.COOKIE_DOMAIN : undefined,
 
           });
-          return next(new AppError('user not found: Unauthorized ', 401));
+          return next(new AppError(ControllerMessages.USER_NOT_FOUND_UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
         }
       }
       if (refreshToken) {
         console.log('refreshToken found');
-        const userPayload = this.jwtService.varifyRefreshToken(refreshToken);
+        const userPayload = this.jwtService.verifyRefreshToken(refreshToken);
         const { exp, iat, ...payload } = userPayload;
         if (userPayload) {
           const createAccesstoken = this.jwtService.signAccessToken(payload);
@@ -100,7 +101,7 @@ export class Authenticate<Entity> {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? "none" : "strict",
-            maxAge: 1000 * 60 * 15,
+            maxAge: cookieData.MAX_AGE_ACCESS_TOKEN,
             domain: isProduction ? env.COOKIE_DOMAIN : undefined,
           });
           const foundUser = await this.getRepositoryDataUseCase.OneDocumentById(userPayload.userId) as IRepoData;
@@ -108,19 +109,19 @@ export class Authenticate<Entity> {
           if (foundUser) {
             req.user = {
               role: payload.role, email: foundUser.email, name: foundUser.name, id: foundUser._id,
-            }; // i can use other routesn
+            };
 
             return next();
           }
 
-          return next(new AppError('user not found', 404));
+          return next(new AppError(ControllerMessages.USER_NOT_FOUND, 404));
         }
       }
     } catch (error) {
-  
-console.log(error);
 
-      return res.status(401).json({ status: false, message: 'No token' });
+
+
+  return next(new AppError(ControllerMessages.NO_TOKEN, HttpStatusCode.UNAUTHORIZED));
     }
   };
 }

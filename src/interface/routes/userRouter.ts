@@ -33,6 +33,7 @@ import { ArticleController } from "../controller/ArticleController";
 import { VerifyUserPasswordUseCase } from "@/application/useCases/auth/VerifyUserPasswordUseCase";
 import { ResetPasswordUseCase } from "@/application/useCases/auth/ResetPasswordUseCase";
 import { UpdateUserUseCase } from "@/application/useCases/UpdateUserUseCase";
+import { GetFeedUseCase } from "@/application/useCases/GetFeedUseCase";
 
 const userArticleActionRepository = new UserArticleActionRepository();
 
@@ -73,6 +74,7 @@ const updateArticleActionUseCase = new UpdateArticleActionUseCase(userArticleAct
 const verifyUserPasswordUseCase = new VerifyUserPasswordUseCase(userRepository, hashService);
 const resetPasswordUseCase = new ResetPasswordUseCase(userRepository, hashService);
 const updateUserUseCase = new UpdateUserUseCase(userRepository);
+const feedUseCase=new GetFeedUseCase(userRepository,articleRepository)
 
 
 
@@ -80,10 +82,10 @@ const updateUserUseCase = new UpdateUserUseCase(userRepository);
 
 const authController = new AuthController(createUserUseCase, sendOtpUseCase, loginUserUseCase);
 const verifyOtpController = new VerifyOtpController(verifyOtpUseCase, registerUserFromPendingUseCase);
-const profileController = new ProfileController(updateUserUseCase,getRepositoryDataUseCase,verifyUserPasswordUseCase,resetPasswordUseCase,uploadImageUseCase);
+const profileController = new ProfileController(updateUserUseCase,getRepositoryDataUseCase,verifyUserPasswordUseCase,resetPasswordUseCase);
 const dashboardController = new DashboardController(createArticleUseCase, uploadImageUseCase, getAllArticleDataUsingFieldUseCase, updateArticleActionUseCase, updateArticleUseCase);
 const authenticate = new Authenticate(jwtService, getRepositoryDataUseCase);
-const articleController=new ArticleController(articleRepository,userRepository)
+const articleController=new ArticleController(feedUseCase)
 
 router.post("/register", authController.register)
 router.post('/verifyOtp', verifyOtpController.verify);

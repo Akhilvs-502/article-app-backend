@@ -1,4 +1,5 @@
 import { User } from '@/domain/entities/User';
+import { FeedDTO } from '../mapper/FeedMapper';
 
 export interface IGetUserDataBynameUseCase {
     execute(name: string): Promise<User | null>
@@ -34,6 +35,12 @@ export interface IUpdateUserUseCase {
 export interface IUploadImageUseCase {
     execute(fileBuffer: Buffer, originalName: string, mimeType: string): Promise<string>
 }
+export interface IGetFeedUseCase {
+    execute(userId:string): Promise<FeedDTO[]>
+}
+
+
+
 
 
 

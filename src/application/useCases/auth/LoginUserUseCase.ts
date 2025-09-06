@@ -38,7 +38,7 @@ console.log(foundUser,"foundUser");
     }
 
     const accessToken = this.JwtService.signAccessToken({ userId: foundUser._id, name: foundUser.firstName, role: 'user' });
-    const refreshToken = this.JwtService.signRefereshToken({ userId: foundUser._id, name: foundUser.firstName, role: 'user' });
+    const refreshToken = this.JwtService.signRefreshToken({ userId: foundUser._id, name: foundUser.firstName, role: 'user' });
    
     //
 

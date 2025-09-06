@@ -27,7 +27,7 @@ export class ArticleRepository extends BaseRepository<Article, IArticle> impleme
         return new Article(data.userId, data.title, data.description, data.content, data.category, data.tags, data.image, data._id, data.likes, data.dislikes, data.createdAt, data.updatedAt, data.isBlocked);
     }
 
-    async getUserFeeds(userId: string,preferences:string[]): Promise<Array<{ article: Article, action: 'like' | 'dislike' | null }>> {
+    async getUserFeeds(userId: string, preferences: string[]): Promise<Array<Article &{ isLiked: boolean, isDisliked: boolean, isBlockedUser: boolean }>> {
         userId = userId.toString()
 
         // const preferences = ["tech", "science"];
@@ -65,7 +65,7 @@ export class ArticleRepository extends BaseRepository<Article, IArticle> impleme
                     isBlockedUser: { $eq: ["$userAction.action", "block"] }
                 }
             },
-            {$match: { isBlocked: false,category:{$in:preferences} }}
+            { $match: { isBlocked: false, category: { $in: preferences } } }
 
         ]);
         return feeds
@@ -78,12 +78,12 @@ export class ArticleRepository extends BaseRepository<Article, IArticle> impleme
 
     }
 
-    async unlikeArticle(userId: string, articleId: string): Promise<boolean> {
+    async removeLikeArticle(userId: string, articleId: string): Promise<boolean> {
         await ArticleModel.updateOne({ _id: articleId }, { $inc: { likes: -1 } });
         return true;
     }
 
-    async dislikeArticle(userId: string, articleId: string): Promise<boolean> {
+    async disLikeArticle(userId: string, articleId: string): Promise<boolean> {
         const result = await ArticleModel.findOneAndUpdate(
             { _id: articleId },
             { $inc: { dislikes: 1 } },
@@ -91,5 +91,14 @@ export class ArticleRepository extends BaseRepository<Article, IArticle> impleme
         );
         return !!result;
     }
+    async removeDislikeArticle(userId: string, articleId: string): Promise<boolean> {
+        const result = await ArticleModel.findOneAndUpdate(
+            { _id: articleId },
+            { $inc: { dislikes: -1 } },
+
+        );
+        return !!result;
+    }
+
 
 }

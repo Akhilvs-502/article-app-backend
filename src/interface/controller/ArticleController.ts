@@ -3,29 +3,24 @@ import { UpdateArticleActionUseCase } from '@/application/useCases/UpdateArticle
 import { ArticleRepository } from '@/infrastructure/repositories/ArticleRepository';
 import { HttpStatusCode } from '@/shared/constants/HttpStatusCode';
 import { IUserRepository } from '@/domain/repositories/IUserRepository';
+import { ControllerMessages } from '@/shared/constants/ControllerMessages';
+import { IGetFeedUseCase } from '@/application/interfaces/IUserUseCase';
 
 export class ArticleController {
-    constructor(private articleRepository: ArticleRepository,
-        private userRepository: IUserRepository
+    constructor(
+        private feedUseCase: IGetFeedUseCase
     ) { }
 
     getFeeds = async (req: Request, res: Response, next: NextFunction) => {
         try {
 
-            console.log("fetching.........data");
-
-            // const userId=req.user as 
-            const user=req.user as { id: string };
-            const userData=await this.userRepository.findById(user.id);
-            const feeds = await this.articleRepository.getUserFeeds(user.id,userData?.preferences || [] );
-
-            // console.log(feeds);
-
-            res.json({ status: true, message: 'Article fetched successfully', data: feeds });
+            const feeds = await this.feedUseCase.execute(req.user?.id!)
+            
+            res.json({ status: true, message: ControllerMessages.ARTICLE_FETCHED, data: feeds });
 
         } catch (error) {
-            console.error(error);
-            return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+            
+            return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({ message: ControllerMessages.INTERNAL_SERVER_ERROR });
         }
     }
 }

@@ -3,6 +3,12 @@ import { UserArticleActionModel } from '../database/UserArticleActionModel';
 
 export class UserArticleActionRepository implements IUserArticleActionRepository {
 
+async findOne(userId: string, articleId: string): Promise<any> {
+    return await UserArticleActionModel.findOne({ userId, articleId });
+     
+  }
+
+
 
   async likeArticle(userId: string, articleId: string): Promise<boolean> {
     

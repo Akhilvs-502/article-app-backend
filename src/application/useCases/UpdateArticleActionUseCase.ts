@@ -7,30 +7,46 @@ export class UpdateArticleActionUseCase implements IUpdateArticleActionUseCase {
         private userArticleActionRepository: UserArticleActionRepository,
         private articleRepository: ArticleRepository
 
-    ) {}
+    ) { }
 
- 
 
-    async execute(userId: string, articleId: string, action: 'like' | 'unlike' | 'dislike' | 'block'): Promise<void> {
-        
+
+    async execute(userId: string, articleId: string, action: 'like' | 'removeLike' | 'dislike' | 'removeDislike' | 'block'): Promise<void> {
+
         console.log(action);
 
-        
+        const currentData = await this.userArticleActionRepository.findOne(userId, articleId)
+
         switch (action) {
-            
+
             case 'like':
-                await this.userArticleActionRepository.likeArticle(userId, articleId);
-                await this.articleRepository.likeArticle(userId, articleId);
+                if (currentData?.action == 'dislike') {
+                    await this.articleRepository.removeDislikeArticle(userId, articleId);
+                }
+                if(currentData.action!=="like"){
+                    await this.userArticleActionRepository.likeArticle(userId, articleId);
+                    await this.articleRepository.likeArticle(userId, articleId);
+                }
                 break;
-            case 'unlike':
-              const unlike=await this.userArticleActionRepository.unlikeArticle(userId, articleId);
-                if(unlike)
-                await this.articleRepository.unlikeArticle(userId, articleId);          
+            case 'removeLike':
+                const unlike = await this.userArticleActionRepository.unlikeArticle(userId, articleId);
+                if (unlike)
+                    await this.articleRepository.removeLikeArticle(userId, articleId);
                 break;
             case 'dislike':
-                await this.userArticleActionRepository.dislikeArticle(userId, articleId);
-                await this.articleRepository.dislikeArticle(userId, articleId); 
-                break;
+                if (currentData?.action == 'like') {
+                    await this.articleRepository.removeLikeArticle(userId, articleId);
+                }
+                if(currentData.action!="dislike"){
+
+                    await this.userArticleActionRepository.dislikeArticle(userId, articleId);
+                    await this.articleRepository.disLikeArticle(userId, articleId);
+                    break;   
+                }
+            case 'removeDislike':
+                if (currentData?.action == 'like') {
+                    await this.articleRepository.removeDislikeArticle(userId, articleId);
+                }    
             case 'block':
                 await this.userArticleActionRepository.blockArticle(userId, articleId);
                 // await this.articleRepository.blockArticle(userId, articleId);

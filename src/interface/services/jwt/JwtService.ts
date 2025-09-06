@@ -3,24 +3,24 @@ import { IJwtService } from '@/domain/services/IJwtService';
 
 export class JwtService implements IJwtService {
   constructor(
-        private readonly accessTokenSecrect:string,
-        private readonly RefreshTokenSecrect:string,
+        private readonly accessTokenSecret:string,
+        private readonly RefreshTokenSecret:string,
   ) {}
 
   signAccessToken(payload: object): string {
-    return Jwt.sign(payload, this.accessTokenSecrect, { expiresIn: '1h' });
+    return Jwt.sign(payload, this.accessTokenSecret, { expiresIn: '1h' });
   }
 
-  signRefereshToken(payload: object): string {
-    return Jwt.sign(payload, this.RefreshTokenSecrect, { expiresIn: '7d' });
+  signRefreshToken(payload: object): string {
+    return Jwt.sign(payload, this.RefreshTokenSecret, { expiresIn: '7d' });
   }
 
-  varifyRefreshToken(token: string):any {
-    return Jwt.verify(token, this.RefreshTokenSecrect);
+  verifyRefreshToken(token: string):any {
+    return Jwt.verify(token, this.RefreshTokenSecret);
   }
 
-  varifyAccessToken(token: string):any {
-    return Jwt.verify(token, this.accessTokenSecrect);
+  verifyAccessToken(token: string):any {
+    return Jwt.verify(token, this.accessTokenSecret);
   }
   
 }

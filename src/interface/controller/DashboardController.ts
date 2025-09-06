@@ -7,6 +7,7 @@ import { MulterDTO } from '@/application/dto/MulterDTO';
 import { IUploadImageUseCase } from '@/application/interfaces/IUserUseCase';
 import { IGetAllArticleDataUsingFieldUseCase } from '@/application/interfaces/IShowUserArticleUseCase';
 import { IUpdateArticleActionUseCase } from '@/application/interfaces/IUpdateArticleActionUseCase';
+import { ControllerMessages } from '@/shared/constants/ControllerMessages';
 
 export class DashboardController {
   constructor(
@@ -26,9 +27,8 @@ export class DashboardController {
 
       const result = await this.createArticleUseCase.execute(user?.id!, article.title, article.description, article.content, article.category, article.tags, article.image)
 
-      res.json({ status: true, message: 'Article created Successfully' });
+      res.json({ status: true, message: ControllerMessages.ARTICLE_CREATED_SUCCESS, data: result });
     } catch (error: any) {
-      console.log("error message", error.message);
 
       next(new AppError(error.message, HttpStatusCode.INTERNAL_SERVER_ERROR));
 
@@ -49,7 +49,7 @@ export class DashboardController {
       const url = await this.uploadImageUseCase.execute(fileData.buffer, fileData.originalName, fileData.mimetype)
       console.log("image url", url);
 
-      res.status(HttpStatusCode.OK).json({ status: true, message: 'image uploaded ', data: url });
+      res.status(HttpStatusCode.OK).json({ status: true, message: ControllerMessages.IMAGE_UPLOADED, data: url });
 
     } catch (error) {
 
@@ -63,16 +63,12 @@ export class DashboardController {
   userArticles = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-      console.log("userArtile enter");
-
       const user = req.user
       console.log("userId", user?.id!.toString());
 
       const articles = await this.getAllArticleDataUsingFieldUseCase.execute({ userId: user?.id!.toString() });
 
-      console.log("articles", articles);
-
-      res.json({ status: true, message: "user articles", data: articles });
+      res.json({ status: true, message: ControllerMessages.USER_ARTICLES, data: articles });
     } catch (error) {
       console.log((error));
       next(new AppError('Something went wrong', HttpStatusCode.INTERNAL_SERVER_ERROR));
@@ -96,7 +92,7 @@ export class DashboardController {
       //   return next(new AppError('Article not found', HttpStatusCode.NOT_FOUND));
       // }
 
-      res.json({ status: true, message: 'Article updated successfully', data: updatedArticle });
+      res.json({ status: true, message: ControllerMessages.ARTICLE_UPDATED_SUCCESS, data: updatedArticle });
     } catch (error) {
       console.error(error);
       return next(new AppError('Something went wrong', HttpStatusCode.INTERNAL_SERVER_ERROR));
@@ -109,18 +105,11 @@ export class DashboardController {
       const { action } = req.body;
       const articleId = req.params.id;
       const user = req.user;
-      console.log("article Id",articleId);
-      console.log("updating articles", articleId, user?.id);
-      console.log("data action",action);
+  
 
       const result = await this.updateArticleActionUseCase.execute(user?.id!, articleId, action);
 
-
-      // if (!result) {
-      //   return next(new AppError('Article not found', HttpStatusCode.NOT_FOUND));
-      // }
-
-      res.json({ status: true, message: 'Article action updated successfully', data: result });
+      res.json({ status: true, message: ControllerMessages.ARTICLE_ACTION_UPDATED_SUCCESS, data: result });
     } catch (error) {
       console.log((error));
       next(new AppError('Something went wrong', HttpStatusCode.INTERNAL_SERVER_ERROR));

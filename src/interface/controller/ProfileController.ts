@@ -8,8 +8,8 @@ import { IResetPasswordUseCase } from '@/application/interfaces/IUserPasswordUse
 import { User } from '@/domain/entities/User';
 import { AppError } from '@/domain/error/AppError';
 import { HttpStatusCode } from '@/shared/constants/HttpStatusCode';
-import { MulterDTO } from '@/application/dto/MulterDTO';
-import { Multer } from "multer"
+import { ControllerMessages } from '@/shared/constants/ControllerMessages';
+
 import { UserMapper } from '@/application/mapper/UserMapper';
 
 export class ProfileController {
@@ -18,7 +18,7 @@ export class ProfileController {
     private getRepositoryDataUseCase: IGetRepositoryDataUseCase<User>,
     private verifyUserPasswordUseCase: IVerifyUserPasswordUseCase,
     private resetPasswordUseCase: IResetPasswordUseCase,
-    private uploadImageUsecase: IUploadImageUseCase
+ 
   ) { }
 
   update = async (req: Request, res: Response) => {
@@ -29,9 +29,9 @@ export class ProfileController {
 
 
       const data = await this.updateUseCase.execute(user.email, profileData);
-      if (data) { res.status(HttpStatusCode.OK).json({ status: true, message: 'problems fetched success', user: { firstName: data.firstName, email: data.email, image: data.image } }); }
+      if (data) { res.status(HttpStatusCode.OK).json({ status: true, message: ControllerMessages.PROFILE_FETCHED_SUCCESS, user: { firstName: data.firstName, email: data.email, image: data.image } }); }
     } catch (error: any) {
-      res.status(400).json({ status: false, message: error.message });
+      res.status(400).json({ status: false, message: error.message }); // Consider a constant for error
     }
   };
 
@@ -47,7 +47,7 @@ export class ProfileController {
 
         const profileDTO = UserMapper.toResponseDTO(profile)
 
-        return res.status(HttpStatusCode.OK).json({ status: true, message: 'Problems fetched success', user: profileDTO });
+        return res.status(HttpStatusCode.OK).json({ status: true, message: ControllerMessages.PROFILE_FETCHED_SUCCESS, user: profileDTO });
       }
       next(new AppError('Something went wrong', 500));
 
@@ -74,9 +74,9 @@ export class ProfileController {
       if (isValid) {
         this.resetPasswordUseCase.execute(data.email, data.password);
 
-        res.status(HttpStatusCode.OK).json({ status: true, message: 'password updated' });
+        res.status(HttpStatusCode.OK).json({ status: true, message: ControllerMessages.PASSWORD_UPDATED, });
       } else {
-        next(new AppError('Incorrect current password', 409));
+        next(new AppError(ControllerMessages.INCORRECT_CURRENT_PASSWORD, 409));
 
         // res.status(400).json({ status: false, message: "Incorrect current password" })
       }
@@ -89,26 +89,6 @@ export class ProfileController {
   };
 
 
-  // profilePicUpload = async (req: Request, res: Response, next: NextFunction) => {
-  //   try {
-
-  //     // console.log("file data",req.file);
-
-  //     const file = req.file as Express.Multer.File
-
-  //     const fileData = new MulterDTO(file)
-
-  //     const url = await this.uploadImageUsecase.execute(fileData.buffer, fileData.originalName, fileData.mimetype)
-
-  //     res.status(HttpStatusCode.OK).json({ status: true, message: 'image uploaded ', data: url });
-
-  //   } catch (error) {
-
-  //     next(new AppError('Something went wrong', 500));
-
-  //   }
-  // }
-
   updatePreferences = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = req.user as { email: string };
@@ -116,7 +96,7 @@ export class ProfileController {
 
       const data = await this.updateUseCase.execute(user.email,{preferences:preferencesData});
       if (data) {
-        res.status(HttpStatusCode.OK).json({ status: true, message: 'Preferences updated successfully', user: { email: data.email, preferences: data.preferences } });
+        res.status(HttpStatusCode.OK).json({ status: true, message: ControllerMessages.PREFERENCES_UPDATED_SUCCESS, user: { email: data.email, preferences: data.preferences } });
       }
     } catch (error: any) {
       res.status(400).json({ status: false, message: error.message });

@@ -4,6 +4,7 @@ import { IVerifyOtpUseCase } from '@/application/interfaces/IOtpUseCases';
 import { IRegisterUserFromPendingUseCase } from '@/application/interfaces/IUserUseCase';
 import { AppError } from '@/domain/error/AppError';
 import { HttpStatusCode } from '@/shared/constants/HttpStatusCode';
+import { ControllerMessages } from '@/shared/constants/ControllerMessages';
 
 export class VerifyOtpController {
   constructor(
@@ -19,12 +20,12 @@ export class VerifyOtpController {
       const isValid = await this.verifyOtpUseCase.execute(data.email, data.otp);
 
       if (!isValid) {
-        return res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Invalid or expired OTP' });
+        return res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: ControllerMessages.INVALID_OR_EXPIRED_OTP });
       }
 
       const userData = await this.registerUserFromPendingUseCase.execute(data.email);
 
-      res.json({ status: true, message: 'user created Successfully', user: { name: userData?.firstName, email: userData?.email } });
+      res.json({ status: true, message: ControllerMessages.USER_CREATED_SUCCESS, user: { name: userData?.firstName, email: userData?.email } });
     } catch (error: any) {
       console.log("error message",error.message);
       
