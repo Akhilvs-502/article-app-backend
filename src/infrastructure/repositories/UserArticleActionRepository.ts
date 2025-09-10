@@ -37,7 +37,7 @@ async findOne(userId: string, articleId: string): Promise<any> {
   async blockArticle(userId: string, articleId: string): Promise<void> {
       await UserArticleActionModel.findOneAndUpdate(
       { userId, articleId },
-      { IsBlocked: true },
+      { action: 'block' },
       { new: true, upsert: true }
     );
   }
