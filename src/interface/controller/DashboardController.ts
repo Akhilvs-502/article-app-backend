@@ -106,6 +106,8 @@ export class DashboardController {
       const articleId = req.params.id;
       const user = req.user;
   
+      console.log("article action", action, articleId, user?.id);
+      
 
       const result = await this.updateArticleActionUseCase.execute(user?.id!, articleId, action);
 
