@@ -35,12 +35,6 @@ console.log("current data",currentData);
                     await this.articleRepository.likeArticle(userId, articleId);
                 }
                 break;
-
-            case 'removeLike':
-                const unlike = await this.userArticleActionRepository.unlikeArticle(userId, articleId);
-                if (unlike)
-                    await this.articleRepository.removeLikeArticle(userId, articleId);
-                break;
             case 'dislike':
                 if (currentData?.action == 'like') {
                     await this.articleRepository.removeLikeArticle(userId, articleId);
@@ -56,10 +50,7 @@ console.log("current data",currentData);
                     await this.articleRepository.disLikeArticle(userId, articleId);
                     break;   
                 }
-            case 'removeDislike':
-                if (currentData?.action == 'like') {
-                    await this.articleRepository.removeDislikeArticle(userId, articleId);
-                }    
+                break;
             case 'block':
                 await this.userArticleActionRepository.blockArticle(userId, articleId);
                 // await this.articleRepository.blockArticle(userId, articleId);
